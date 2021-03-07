@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">NewRecipe</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="recipe_card">Recipe Card</string>
+    <string name="amount_and_unit">\u2022 %1$s %2$s</string>
+    <string name="prep_time">Prep Time: %1$s</string>
+    <string name="cook_time">Cook Time: %1$s</string>
+    <string name="add_image">Add Image to Recipe</string>
+    <string name="remove_image">Remove Image</string>
+    <string name="favourite_menu_item">Not Clicked</string>
+    <string name="amount_view">Amount</string>
+    <string name="unit_view">Unit</string>
+    <string name="ingredient_view">Ingredient</string>
+    <string name="remove_string">-</string>
+    <string name="add_string">+</string>
+    <string name="prep_time_view">Prep Time</string>
+    <string name="cook_time_view">Cook Time</string>
+    <string name="recipe_description_view">Recipe Description</string>
+    <string name="save_string">Save</string>
+    <string name="recipe_display">Recipe:</string>
+    <string name="prep_time_display">Prep Time:</string>
+    <string name="cook_time_display">Cook Time:</string>
+    <string name="recipe_description_display">Recipe Description:</string>
+    <string name="hours">Hours</string>
+    <string name="minutes">Minutes</string>
+    <string name="delete_recipe">Delete Recipe</string>
+    <string name="edit_recipe">Edit Recipe</string>
+    <string name="search">Search</string>
+
+</resources>
