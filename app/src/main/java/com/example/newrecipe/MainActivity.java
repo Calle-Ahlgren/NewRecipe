@@ -61,9 +61,12 @@ public class MainActivity extends AppCompatActivity {
 
         loadData();
         buildRecipeList();
-        if (!recipeCardList.isEmpty()) {
-            findViewById(R.id.intro_img).setVisibility(View.GONE);
-        }
+        checkEmpty();
+    }
+
+    private void checkEmpty() {
+        if (recipeCardList.isEmpty()) findViewById(R.id.intro_img).setVisibility(View.VISIBLE);
+        else findViewById(R.id.intro_img).setVisibility(View.GONE);
     }
 
     private void addRecipe() {
@@ -128,11 +131,13 @@ public class MainActivity extends AppCompatActivity {
                     recipeCardList.add(newRecipeCard);
                     recipeCardList.sort(alphabetical);
                     adapter.notifyDataSetChanged();
+                    checkEmpty();
                 }
             } else if (requestCode == DISPLAY_RECIPE_REQ) {
                 if (data == null) {
                     recipeCardList.remove(cardPos);
                     adapter.notifyItemRemoved(cardPos);
+                    checkEmpty();
                 } else {
                     RecipeCard editedRecipeCard = data.getParcelableExtra(DisplayRecipe.EDIT_RECIPE);
                     editData(editedRecipeCard);
