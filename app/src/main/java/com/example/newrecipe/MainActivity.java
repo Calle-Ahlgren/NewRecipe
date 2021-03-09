@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         setContentView(R.layout.activity_main);
         FAVOURITES_TOGGLED = false;
 
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void editData(RecipeCard editedCard) {
         recipeCardList.set(cardPos, editedCard);
-        recipeCardList.sort(alphabetical);
+        Collections.sort(recipeCardList, alphabetical);
         adapter.notifyDataSetChanged();
         saveData();
     }
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 if (data != null) {
                     RecipeCard newRecipeCard = data.getParcelableExtra(NEW_RECIPE);
                     recipeCardList.add(newRecipeCard);
-                    recipeCardList.sort(alphabetical);
+                    Collections.sort(recipeCardList, alphabetical);
                     adapter.notifyDataSetChanged();
                     checkEmpty();
                 }
@@ -166,9 +166,9 @@ public class MainActivity extends AppCompatActivity {
             else normalCards.add(card);
         }
 
-        favouriteCards.sort(alphabetical);
+        Collections.sort(favouriteCards, alphabetical);
 
-        normalCards.sort(alphabetical);
+        Collections.sort(normalCards, alphabetical);
 
         recipeCardList.clear();
         recipeCardList.addAll(favouriteCards);
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 sortFavourites();
             } else {
                 item.setIcon(R.drawable.unfilled_heart);
-                recipeCardList.sort(alphabetical);
+                Collections.sort(recipeCardList, alphabetical);
                 adapter.notifyDataSetChanged();
             }
             FAVOURITES_TOGGLED = !FAVOURITES_TOGGLED;
