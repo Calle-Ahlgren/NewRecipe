@@ -26,6 +26,10 @@ public class IngredientEntry implements Parcelable {
         return ingredient;
     }
 
+    public String toString() {
+        return amount + " " + unit + "  " + ingredient;
+    }
+
     protected IngredientEntry(Parcel in) {
         amount = in.readString();
         unit = in.readString();

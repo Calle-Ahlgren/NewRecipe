@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -72,8 +73,8 @@ public class DisplayRecipe extends AppCompatActivity implements DeleteDialog.Del
         ingredientEntries = recipeCard.getIngredients();
         IngredientEntry entry = ingredientEntries.get(0);
 
-        String prepTime = recipeCard.getPrepTime();
-        String cookTime = recipeCard.getCookTime();
+        String prepTime = " " + recipeCard.getPrepTime();
+        String cookTime = " " + recipeCard.getCookTime();
 
         if (!prepTime.equals("")) {
             TextView prepView = findViewById(R.id.prep_time_display);
@@ -97,69 +98,50 @@ public class DisplayRecipe extends AppCompatActivity implements DeleteDialog.Del
         }
 
         recipeName.setText(recipeCard.getRecipeName());
-        ((TextView) findViewById(R.id.amount_display)).setText(
-                getString(R.string.amount_and_unit, entry.getAmount(), entry.getUnit()));
-        ((TextView) findViewById(R.id.ingredient_display)).setText(entry
-                .getIngredient());
+        ((TextView) findViewById(R.id.ingredient_row)).setText(getString(R.string.ingredient_row_template, entry.toString()));
+
         ((TextView) findViewById(R.id.description_display)).setText(recipeCard.getDescription());
 
-        int numOfIngredients = ingredientEntries.size();
+        int numOfIngredients;
 
-        if (numOfIngredients > 1) {
+        if ((numOfIngredients = ingredientEntries.size()) > 1) {
             generateIngredientRows(numOfIngredients);
         }
     }
 
     private void generateIngredientRows(int numOfIngredients) {
         ConstraintLayout recipeCardLayout = findViewById(R.id.display_constraint);
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(recipeCardLayout);
         List<Integer> rowIdList = new ArrayList<>();
+        rowIdList.add(R.id.ingredient_row);
         IngredientEntry entry;
         for (int i = 1; i < numOfIngredients; i++) {
             entry = ingredientEntries.get(i);
-            TextView amountAndUnit = new TextView(this);
-            TextView ingredient = new TextView(this);
-            amountAndUnit.setText(getString(R.string.amount_and_unit,
-                    entry.getAmount(), entry.getUnit()));
-            ingredient.setText(entry.getIngredient());
+            TextView ingredientRow = new TextView(this);
 
-            rowLayout = new ConstraintLayout(this);
-            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ingredientRow.setText(getString(R.string.ingredient_row_template, entry.toString()));
 
-            rowIdList.add(View.generateViewId());
-            rowLayout.setId(rowIdList.get(i-1));
+            ingredientRow.setId(View.generateViewId());
+            rowIdList.add(ingredientRow.getId());
 
-            if (i == 1) {
-                layoutParams.topToBottom = R.id.ingredient_row_display;
-            } else {
-                layoutParams.topToBottom = rowIdList.get(i-2);
-            }
+            setRowParams(ingredientRow, rowIdList.get(i-1));
 
-            rowLayout.setLayoutParams(layoutParams);
-
-            setInputParams(amountAndUnit, rowLayout.getId());
-            amountAndUnit.setId(View.generateViewId());
-            setInputParams(ingredient, amountAndUnit.getId());
-
-            rowLayout.addView(amountAndUnit);
-            rowLayout.addView(ingredient);
-            recipeCardLayout.addView(rowLayout);
+            recipeCardLayout.addView(ingredientRow);
         }
 
-        ConstraintLayout recipeDescriptionTag = findViewById(R.id.time_row);
+        TextView recipeDescriptionTag = findViewById(R.id.prep_time_tag);
         ConstraintLayout.LayoutParams descriptionTagParams = (ConstraintLayout.LayoutParams) recipeDescriptionTag.getLayoutParams();
         descriptionTagParams.topToBottom = rowIdList.get(rowIdList.size() - 1);
         recipeDescriptionTag.setLayoutParams(descriptionTagParams);
     }
 
-    private void setInputParams(TextView inputField, int id) {
+    private void setRowParams(TextView inputField, int id) {
         ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(Utility.dpToPx(5, getApplicationContext()), 0, 0, 0);
-        params.topToTop = rowLayout.getId();
-        if (id == rowLayout.getId()) {
-            params.startToStart = id;
-        } else {
-            params.startToEnd = id;
-        }
+
+        params.startToStart = id;
+        params.topToBottom = id;
+
         inputField.setTextSize(TypedValue.COMPLEX_UNIT_SP, 19);
         inputField.setLayoutParams(params);
     }

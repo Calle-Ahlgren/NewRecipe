@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -38,11 +39,11 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
     private Button imgBtn;
 
     private int numOfIngredientRows;
-    private ArrayList<Integer> rowIdList;
+    private List<Integer> amountIds;
+    private List<Integer> unitIds;
+    private List<Integer> ingredientIds;
 
-    private ConstraintLayout rowLayout;
-    private ConstraintLayout buttonLayout;
-    private ConstraintLayout ingredientLayout;
+    private ConstraintLayout constraintLayout;
 
     private ConstraintLayout.LayoutParams buttonParams;
     private RecipeCard recipe;
@@ -61,8 +62,12 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         numOfIngredientRows = 1;
-        rowIdList = new ArrayList<>();
-        buttonParams = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        amountIds = new ArrayList<>();
+        unitIds = new ArrayList<>();
+        ingredientIds = new ArrayList<>();
+
+        buttonParams = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        constraintLayout = findViewById(R.id.new_recipe_layout);
 
         setViews();
 
@@ -77,9 +82,6 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
     }
 
     private void setViews() {
-        ingredientLayout = findViewById(R.id.ingredient_layout);
-        buttonLayout = findViewById(R.id.button_layout);
-
         imgBtn = findViewById(R.id.image_button);
         recipeImg = findViewById(R.id.image_view);
         addBtn = findViewById(R.id.add_ingredient);
@@ -95,6 +97,10 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
         cookTimeInput = findViewById(R.id.cook_input);
         cookTimeInput.setShowSoftInputOnFocus(false);
         descriptionInput = findViewById(R.id.description_input);
+
+        amountIds.add(amountInput.getId());
+        unitIds.add(unitInput.getId());
+        ingredientIds.add(ingredientInput.getId());
     }
 
     private void setBtnListeners() {
@@ -175,62 +181,57 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
     }
 
     private void addIngredientRow() {
-        rowLayout = new ConstraintLayout(this);
-        ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        if (numOfIngredientRows == 1) {
-            layoutParams.topToBottom = R.id.input_row1;
-        }
-        else {
-            layoutParams.topToBottom = rowIdList.get(numOfIngredientRows - 2);
-        }
-
-        rowIdList.add(View.generateViewId());
-        rowLayout.setId(rowIdList.get(numOfIngredientRows - 1));
-        rowLayout.setLayoutParams(layoutParams);
-
         EditText amountInput = new EditText(this);
         EditText unitInput = new EditText(this);
         EditText ingredientInput = new EditText(this);
 
-        setInputParams(amountInput, 0, 2002, 4);
-        setInputParams(unitInput, 115, 1, 3);
-        setInputParams(ingredientInput, 205, 1, 7);
+        amountInput.setId(View.generateViewId());
+        amountIds.add(amountInput.getId());
 
-        rowLayout.addView(amountInput, 0);
-        rowLayout.addView(unitInput, 1);
-        rowLayout.addView(ingredientInput, 2);
+        unitInput.setId(View.generateViewId());
+        unitIds.add(unitInput.getId());
 
-        buttonParams.topToBottom = rowLayout.getId();
-        buttonLayout.setLayoutParams(buttonParams);
-        ingredientLayout.addView(rowLayout);
+        ingredientInput.setId(View.generateViewId());
+        ingredientIds.add(ingredientInput.getId());
+
+        setRowParams(amountInput, amountIds.get(numOfIngredientRows - 1), 4);
+        amountInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        setRowParams(unitInput, unitIds.get(numOfIngredientRows - 1), 3);
+        setRowParams(ingredientInput, ingredientIds.get(numOfIngredientRows - 1), 7);
+
+        constraintLayout.addView(amountInput);
+        constraintLayout.addView(unitInput);
+        constraintLayout.addView(ingredientInput);
+
+        buttonParams.topToBottom = amountInput.getId();
+        buttonParams.startToStart = constraintLayout.getId();
+        buttonParams.endToStart = addBtn.getId();
+        removeBtn.setLayoutParams(buttonParams);
 
         numOfIngredientRows++;
     }
 
-    private void setInputParams(EditText inputField, int margin, int inputType, int ems) {
-        inputField.setInputType(inputType);
-        inputField.setEms(ems);
+    private void setRowParams(EditText inputField, int id, int ems) {
         ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(Utility.dpToPx(margin, getBaseContext()), 0, 0, 0);
-        params.topToTop = rowLayout.getId();
-        params.startToStart = rowLayout.getId();
+        inputField.setEms(ems);
+        params.topToBottom = id;
+        params.startToStart = id;
         inputField.setLayoutParams(params);
     }
 
     private void removeIngredientRow() {
         if (numOfIngredientRows > 1) {
-            if (numOfIngredientRows == 2) {
-                buttonParams.topToBottom = R.id.input_row1;
-            } else {
-                buttonParams.topToBottom = rowIdList.get(numOfIngredientRows - 3);
-            }
+            constraintLayout.removeView(findViewById(amountIds.get(numOfIngredientRows - 1)));
+            constraintLayout.removeView(findViewById(unitIds.get(numOfIngredientRows - 1)));
+            constraintLayout.removeView(findViewById(ingredientIds.get(numOfIngredientRows - 1)));
 
-            buttonLayout.setLayoutParams(buttonParams);
+            buttonParams.topToBottom = amountIds.get(numOfIngredientRows - 2);
 
-            ingredientLayout.removeView(findViewById(rowIdList.get(numOfIngredientRows - 2)));
+            removeBtn.setLayoutParams(buttonParams);
 
-            rowIdList.remove(rowIdList.size() - 1);
+            amountIds.remove(amountIds.size() - 1);
+            unitIds.remove(unitIds.size() - 1);
+            ingredientIds.remove(ingredientIds.size() - 1);
 
             numOfIngredientRows--;
         }
@@ -241,10 +242,10 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
         IngredientEntry entry;
         for (int i = 0; i < numOfIngredientRows; i++) {
             if (i > 0) {
-                rowLayout = findViewById(rowIdList.get(i-1));
-                amountInput = (EditText) rowLayout.getChildAt(0);
-                unitInput = (EditText) rowLayout.getChildAt(1);
-                ingredientInput = (EditText) rowLayout.getChildAt(2);
+                constraintLayout = findViewById(amountIds.get(i-1));
+                amountInput = (EditText) constraintLayout.getChildAt(0);
+                unitInput = (EditText) constraintLayout.getChildAt(1);
+                ingredientInput = (EditText) constraintLayout.getChildAt(2);
             }
 
             if (!ingredientInput.getText().toString().equals("")) {
@@ -298,10 +299,10 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
             addIngredientRow();
             entry = ingredientEntries.get(i);
 
-            rowLayout = findViewById(rowIdList.get(i - 1));
-            amountInput = (EditText) rowLayout.getChildAt(0);
-            unitInput = (EditText) rowLayout.getChildAt(1);
-            ingredientInput = (EditText) rowLayout.getChildAt(2);
+            constraintLayout = findViewById(amountIds.get(i - 1));
+            amountInput = (EditText) constraintLayout.getChildAt(0);
+            unitInput = (EditText) constraintLayout.getChildAt(1);
+            ingredientInput = (EditText) constraintLayout.getChildAt(2);
 
             amountInput.setText(entry.getAmount());
             unitInput.setText(entry.getUnit());

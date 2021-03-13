@@ -2,7 +2,7 @@
     <string name="app_name">NewRecipe</string>
     <string name="recipe_name">Recipe Name</string>
     <string name="recipe_card">Recipe Card</string>
-    <string name="amount_and_unit">\u2022 %1$s %2$s</string>
+    <string name="ingredient_row_template">\u2022 %1$s</string>
     <string name="prep_time">Prep Time: %1$s</string>
     <string name="cook_time">Cook Time: %1$s</string>
     <string name="add_image">Add Image to Recipe</string>
