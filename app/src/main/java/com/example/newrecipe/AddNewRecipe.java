@@ -241,12 +241,9 @@ public class AddNewRecipe extends AppCompatActivity implements TimeDialog.TimeDi
         List<IngredientEntry> ingredientEntries = new ArrayList<>();
         IngredientEntry entry;
         for (int i = 0; i < numOfIngredientRows; i++) {
-            if (i > 0) {
-                constraintLayout = findViewById(amountIds.get(i-1));
-                amountInput = (EditText) constraintLayout.getChildAt(0);
-                unitInput = (EditText) constraintLayout.getChildAt(1);
-                ingredientInput = (EditText) constraintLayout.getChildAt(2);
-            }
+            amountInput = findViewById(amountIds.get(i));
+            unitInput = findViewById(unitIds.get(i));
+            ingredientInput = findViewById(ingredientIds.get(i));
 
             if (!ingredientInput.getText().toString().equals("")) {
                 entry = new IngredientEntry(amountInput.getText().toString(),
